@@ -6,6 +6,7 @@ import os
 from tqdm import tqdm
 import csv
 import matplotlib.pyplot as plt
+import time
 
 import utils
 import TD3
@@ -52,6 +53,8 @@ if __name__ == "__main__":
 	parser.add_argument("--save_model", action="store_true")        # Save model and optimizer parameters
 	parser.add_argument("--load_model", default="")                 # Model load file name, "" doesn't load, "default" uses file_name
 	args = parser.parse_args()
+
+	start_time = time.time()
 
 	file_name = f"{args.policy}_{args.env}_{args.seed}"
 	print("---------------------------------------")
@@ -147,10 +150,9 @@ if __name__ == "__main__":
 			policy.train(replay_buffer, args.batch_size)
 
 		if done: 
-			# +1 to account for 0 indexing. +0 on ep_timesteps since it will increment +1 even if done=True
-			print(f"Total T: {t+1} Episode Num: {episode_num+1} Episode T: {episode_timesteps} Reward: {episode_reward:.3f}")
+			# +1 to account for 0 indexing. +0 on ep_timesteps since it will increment +1 even if done=True=
 			# Reset environment
-			state = env.reset()[0]
+			state = env.reset(seed = args.seed + 100)[0]
 			done = False
 			episode_reward = 0
 			episode_timesteps = 0
@@ -159,25 +161,20 @@ if __name__ == "__main__":
 		# Evaluate episode
 		if (t + 1) % args.eval_freq == 0:
 			evaluations.append(eval_policy(policy, args.env, args.seed))
-			np.save(f"./results/{file_name}", evaluations)
+			os.makedirs(f"./results/{args.env}/{args.policy}", exist_ok=True)
 			if args.save_model: policy.save(f"./models/{file_name}")
 
 	print("Training completed.")
+	end_time = time.time()
+	duration = end_time - start_time
+	hours = int(duration // 3600)
+	minutes = int((duration % 3600) // 60)
+	time_str = f"{hours:02d}:{minutes:02d}"
+	np.save(f"./results/{args.env}/{args.policy}/{args.seed}.npy", evaluations)
 	print(f"Final evaluation: {evaluations[-1]:.3f}")
 	if args.save_model:
 		print(f"Model saved to ./models/{file_name}")
-	print(f"Results saved to ./results/{file_name}.npy")
-
-	# Plot evaluation results
-	timesteps = [0 if i == 0 else i * args.eval_freq for i in range(len(evaluations))]
-	plt.figure(figsize=(10, 6))
-	plt.plot(timesteps, evaluations, marker='o')
-	plt.xlabel('Timestep')
-	plt.ylabel('Average Reward')
-	plt.title(f'{args.policy} on {args.env} (Seed {args.seed})')
-	plt.grid(True)
-	plt.savefig(f"./results/{file_name}_plot.png")
-	print(f"Plot saved to ./results/{file_name}_plot.png")
+	print(f"Results saved to ./results/{args.env}/{args.policy}/{args.seed}.npy")
 
 	# Append to final rewards table
 	final_rewards_file = "./results/final_rewards.csv"
@@ -189,3 +186,14 @@ if __name__ == "__main__":
 		writer.writerow([args.policy, args.env, args.seed, f"{evaluations[-1]:.3f}"])
 
 	print(f"Final reward appended to ./results/final_rewards.csv")
+
+	# Append to training times table
+	training_times_file = "./results/training_times.csv"
+	file_exists = os.path.isfile(training_times_file)
+	with open(training_times_file, 'a', newline='') as csvfile:
+		writer = csv.writer(csvfile)
+		if not file_exists:
+			writer.writerow(["Policy", "Env", "Seed", "Time (HH:MM)"])
+		writer.writerow([args.policy, args.env, args.seed, time_str])
+
+	print(f"Training time appended to ./results/training_times.csv")
