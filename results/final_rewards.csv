@@ -1,0 +1,4 @@
+Policy,Env,Seed,Final Reward
+TD3,HalfCheetah-v5,0,11203.938
+TD3,Hopper-v5,0,3540.030
+TD3,Walker2d-v5,0,4327.091

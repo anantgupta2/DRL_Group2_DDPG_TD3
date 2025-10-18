@@ -1,8 +1,11 @@
 import numpy as np
 import torch
-import gym
+import gymnasium as gym
 import argparse
 import os
+from tqdm import tqdm
+import csv
+import matplotlib.pyplot as plt
 
 import utils
 import TD3
@@ -10,18 +13,16 @@ import OurDDPG
 import DDPG
 
 
-# Runs policy for X episodes and returns average reward
-# A fixed seed is used for the eval environment
 def eval_policy(policy, env_name, seed, eval_episodes=10):
 	eval_env = gym.make(env_name)
-	eval_env.seed(seed + 100)
-
 	avg_reward = 0.
-	for _ in range(eval_episodes):
-		state, done = eval_env.reset(), False
+	for _ in tqdm(range(eval_episodes), desc="Evaluating"):
+		state = eval_env.reset(seed = seed + 100)[0]
+		done = False
 		while not done:
 			action = policy.select_action(np.array(state))
-			state, reward, done, _ = eval_env.step(action)
+			state, reward, terminated, truncated, _ = eval_env.step(action)
+			done = terminated or truncated
 			avg_reward += reward
 
 	avg_reward /= eval_episodes
@@ -66,7 +67,7 @@ if __name__ == "__main__":
 	env = gym.make(args.env)
 
 	# Set seeds
-	env.seed(args.seed)
+	# env.seed(args.seed)
 	env.action_space.seed(args.seed)
 	torch.manual_seed(args.seed)
 	np.random.seed(args.seed)
@@ -90,26 +91,34 @@ if __name__ == "__main__":
 		kwargs["noise_clip"] = args.noise_clip * max_action
 		kwargs["policy_freq"] = args.policy_freq
 		policy = TD3.TD3(**kwargs)
+		print(f"Policy TD3 initialized with state_dim={state_dim}, action_dim={action_dim}, max_action={max_action}")
 	elif args.policy == "OurDDPG":
 		policy = OurDDPG.DDPG(**kwargs)
+		print(f"Policy OurDDPG initialized with state_dim={state_dim}, action_dim={action_dim}, max_action={max_action}")
 	elif args.policy == "DDPG":
 		policy = DDPG.DDPG(**kwargs)
+		print(f"Policy DDPG initialized with state_dim={state_dim}, action_dim={action_dim}, max_action={max_action}")
 
 	if args.load_model != "":
 		policy_file = file_name if args.load_model == "default" else args.load_model
 		policy.load(f"./models/{policy_file}")
+		print(f"Model loaded from {policy_file}")
 
 	replay_buffer = utils.ReplayBuffer(state_dim, action_dim)
+	print(f"Replay buffer initialized with capacity for {state_dim} state and {action_dim} action dimensions")
 	
 	# Evaluate untrained policy
+	print("Evaluating untrained policy...")
 	evaluations = [eval_policy(policy, args.env, args.seed)]
 
-	state, done = env.reset(), False
+	state = env.reset(seed = args.seed + 100)[0]
+	done = False
 	episode_reward = 0
 	episode_timesteps = 0
 	episode_num = 0
 
-	for t in range(int(args.max_timesteps)):
+	print(f"Starting training for {args.max_timesteps} timesteps with start_timesteps={args.start_timesteps}, eval_freq={args.eval_freq}")
+	for t in tqdm(range(int(args.max_timesteps)), desc="Training"):
 		
 		episode_timesteps += 1
 
@@ -123,7 +132,8 @@ if __name__ == "__main__":
 			).clip(-max_action, max_action)
 
 		# Perform action
-		next_state, reward, done, _ = env.step(action) 
+		next_state, reward, terminated, truncated, _ = env.step(action) 
+		done = terminated or truncated
 		done_bool = float(done) if episode_timesteps < env._max_episode_steps else 0
 
 		# Store data in replay buffer
@@ -140,7 +150,8 @@ if __name__ == "__main__":
 			# +1 to account for 0 indexing. +0 on ep_timesteps since it will increment +1 even if done=True
 			print(f"Total T: {t+1} Episode Num: {episode_num+1} Episode T: {episode_timesteps} Reward: {episode_reward:.3f}")
 			# Reset environment
-			state, done = env.reset(), False
+			state = env.reset()[0]
+			done = False
 			episode_reward = 0
 			episode_timesteps = 0
 			episode_num += 1 
@@ -150,3 +161,31 @@ if __name__ == "__main__":
 			evaluations.append(eval_policy(policy, args.env, args.seed))
 			np.save(f"./results/{file_name}", evaluations)
 			if args.save_model: policy.save(f"./models/{file_name}")
+
+	print("Training completed.")
+	print(f"Final evaluation: {evaluations[-1]:.3f}")
+	if args.save_model:
+		print(f"Model saved to ./models/{file_name}")
+	print(f"Results saved to ./results/{file_name}.npy")
+
+	# Plot evaluation results
+	timesteps = [0 if i == 0 else i * args.eval_freq for i in range(len(evaluations))]
+	plt.figure(figsize=(10, 6))
+	plt.plot(timesteps, evaluations, marker='o')
+	plt.xlabel('Timestep')
+	plt.ylabel('Average Reward')
+	plt.title(f'{args.policy} on {args.env} (Seed {args.seed})')
+	plt.grid(True)
+	plt.savefig(f"./results/{file_name}_plot.png")
+	print(f"Plot saved to ./results/{file_name}_plot.png")
+
+	# Append to final rewards table
+	final_rewards_file = "./results/final_rewards.csv"
+	file_exists = os.path.isfile(final_rewards_file)
+	with open(final_rewards_file, 'a', newline='') as csvfile:
+		writer = csv.writer(csvfile)
+		if not file_exists:
+			writer.writerow(["Policy", "Env", "Seed", "Final Reward"])
+		writer.writerow([args.policy, args.env, args.seed, f"{evaluations[-1]:.3f}"])
+
+	print(f"Final reward appended to ./results/final_rewards.csv")
