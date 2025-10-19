@@ -31,6 +31,8 @@ with open('results/final_rewards.csv', 'r') as f:
 
 # Get envs
 envs = sorted(set(times_data.keys()) | set(rewards_data.keys()))
+excluded_envs = ['Humanoid-v5']
+envs = [env for env in envs if env not in excluded_envs]
 
 # Function to calc mean ± se
 def calc_stats(values):
@@ -80,4 +82,6 @@ latex += """\\hline
 \\end{table}
 """
 
+with open('results/td3_ddpg_comparison.tex', 'w') as f:
+    f.write(latex)
 print(latex)

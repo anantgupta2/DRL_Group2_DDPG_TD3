@@ -1,0 +1,19 @@
+\begin{table}[h]
+\centering
+\begin{tabular}{l c c c c}
+\hline
+\multirow{2}{*}{Environment} & \multicolumn{2}{c}{TD3} & \multicolumn{2}{c}{DDPG} \\
+\cline{2-5}
+& Reward & Time (min) & Reward & Time (min) \\
+\hline
+Ant-v5 & 3944.0 ± 785.0 & 69.0 ± 0.5 & 1308.5 ± 196.3 & 76.8 ± 0.7 \\
+HalfCheetah-v5 & 11057.6 ± 91.8 & 55.4 ± 0.2 & 9273.9 ± 517.9 & 59.2 ± 0.2 \\
+Hopper-v5 & 3304.1 ± 88.6 & 56.2 ± 0.6 & 2102.8 ± 442.5 & 59.8 ± 0.2 \\
+InvertedDoublePendulum-v5 & 7695.4 ± 1623.5 & 56.2 ± 0.2 & 9275.6 ± 23.6 & 59.8 ± 0.2 \\
+InvertedPendulum-v5 & 1000.0 ± 0.0 & 53.4 ± 0.2 & 1000.0 ± 0.0 & 57.4 ± 0.2 \\
+Reacher-v5 & -3.1 ± 0.7 & 48.6 ± 0.2 & -5.9 ± 1.6 & 53.2 ± 0.2 \\
+Walker2d-v5 & 4253.9 ± 130.7 & 57.4 ± 0.4 & 1988.5 ± 408.2 & 58.8 ± 0.2 \\
+\hline
+\end{tabular}
+\caption{Comparison of TD3 and DDPG: Final Rewards and Training Time}
+\end{table}

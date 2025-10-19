@@ -11,7 +11,7 @@ def smooth(data, window):
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--envs", nargs='+', default=['Ant-v5', 'InvertedPendulum-v5', 'Walker2d-v5'], help="List of environment names")
+    parser.add_argument("--envs", nargs='+', default=['Ant-v5', 'InvertedPendulum-v5', 'Walker2d-v5', 'HalfCheetah-v5', 'Hopper-v5', 'Reacher-v5', 'InvertedDoublePendulum-v5'], help="List of environment names")
     parser.add_argument("--smooth_window", type=int, default=5, help="Window size for smoothing (1 = no smoothing)")
     args = parser.parse_args()
 
