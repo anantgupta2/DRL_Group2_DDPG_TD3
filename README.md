@@ -67,18 +67,15 @@ jupyter notebook
 3. **Run all cells**:
    - Click "Cell" → "Run All" or run cells individually
 
-4. **View TensorBoard** (embedded in notebook):
-   - TensorBoard will appear inline showing real-time training progress
-   - Compare DDPG vs TD3 metrics side-by-side
-
 **Notebook Features:**
 - ✅ Completely self-contained (no external file imports needed)
 - ✅ Mathematical theory and explanations
 - ✅ Full implementations of DDPG and TD3 from source files
-- ✅ Real-time TensorBoard visualization
+- ✅ Matplotlib-based visualization for comparing learning curves
 - ✅ Automated training and evaluation
-- ✅ Comparative analysis and plots
+- ✅ Comparative analysis and performance summary tables
 - ✅ Optimized for Reacher-v5 (fastest environment)
+- ✅ Uses 500K timesteps (50% of original 1M) for faster experimentation
 
 ### Running Python Scripts
 
@@ -102,8 +99,8 @@ Modify hyperparameters via command-line arguments to `main.py`:
 python main.py \
   --env Reacher-v5 \
   --seed 0 \
-  --max_timesteps 200000 \
-  --start_timesteps 10000 \
+  --max_timesteps 1000000 \
+  --start_timesteps 25000 \
   --eval_freq 5000 \
   --batch_size 256 \
   --discount 0.99 \
@@ -151,29 +148,22 @@ Learning curves from the paper can be found under `/learning_curves`. Each file 
 
 Results are saved as NumPy arrays where each evaluation is the average reward over 10 episodes with no exploration.
 
-## TensorBoard Visualization
+## Visualization
 
-### Notebook (Inline)
-TensorBoard is embedded directly in the notebook:
-- Automatically launches when you run the notebook
-- Updates in real-time during training
-- No separate terminal needed
+### Notebook Visualization
+The notebook uses **Matplotlib** for visualization:
+- Comparative learning curves for DDPG vs TD3
+- Performance summary tables
+- Saved plots in `./notebook_results/`
 
-### Command Line
-For standalone TensorBoard viewing:
+### External Comparison Script
+For detailed multi-seed statistical comparisons, use:
 
 ```bash
-tensorboard --logdir=runs
+python compare_td3_ddpg.py
 ```
 
-Then open `http://localhost:6006` in your browser.
-
-**Available Metrics:**
-- Training/Episode_Reward - Reward per episode during training
-- Training/Episode_Length - Episode lengths
-- Evaluation/Average_Reward - Evaluation performance over time
-- Loss/Critic - Critic network loss
-- Loss/Actor - Actor network loss
+This generates comprehensive comparison plots across multiple seeds and environments.
 
 ## Project Modifications
 
@@ -183,8 +173,9 @@ Then open `http://localhost:6006` in your browser.
 2. **Environment Names**: Changed from `-v2` to `-v5` (e.g., `HalfCheetah-v2` → `HalfCheetah-v5`)
 3. **PyTorch Version**: Updated to PyTorch 2.9 with CUDA 12.6 support
 4. **Notebook Added**: New self-contained Jupyter notebook for easy experimentation
-5. **TensorBoard**: Added comprehensive logging and visualization
-6. **Timestep Reduction**: Notebook uses 200K steps for Reacher-v5 (converges faster)
+5. **Visualization**: Notebook uses Matplotlib instead of TensorBoard for direct comparisons
+6. **Timestep Reduction**: Notebook uses 500K steps (50% of original 1M) for faster experimentation
+7. **Comparison Script**: Added `compare_td3_ddpg.py` for multi-seed statistical analysis
 
 ### Code is Representative But Not Identical to Paper
 
@@ -221,11 +212,8 @@ batch_size = 128  # Instead of 256
 ### Jupyter Kernel Dies
 Reduce max_timesteps or eval_freq to lower memory usage:
 ```python
-max_timesteps = int(1e5)  # Instead of 2e5
+max_timesteps = int(2e5)  # Instead of 5e5
 ```
-
-### TensorBoard Not Updating
-Refresh the page or restart the TensorBoard cell.
 
 ## License
 
