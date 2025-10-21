@@ -3,3 +3,7 @@ matplotlib==3.10.7
 numpy==2.3.4
 torch==2.9.0+cu126
 tqdm==4.67.1
+tensorboard
+jupyter
+ipykernel
+gymnasium[mujoco]
