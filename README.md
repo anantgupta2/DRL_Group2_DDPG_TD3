@@ -75,7 +75,7 @@ jupyter notebook
 - ✅ Automated training and evaluation
 - ✅ Comparative analysis and performance summary tables
 - ✅ Optimized for Reacher-v5 (fastest environment)
-- ✅ Uses 500K timesteps (50% of original 1M) for faster experimentation
+- ✅ Uses 1M timesteps matching original experiments
 
 ### Running Python Scripts
 
@@ -172,10 +172,9 @@ This generates comprehensive comparison plots across multiple seeds and environm
 1. **Environment Updates**: Updated from `gym` to `gymnasium` (v1.2.1)
 2. **Environment Names**: Changed from `-v2` to `-v5` (e.g., `HalfCheetah-v2` → `HalfCheetah-v5`)
 3. **PyTorch Version**: Updated to PyTorch 2.9 with CUDA 12.6 support
-4. **Notebook Added**: New self-contained Jupyter notebook for easy experimentation
+4. **Notebook Added**: New self-contained Jupyter notebook for easy experimentation with 1M timesteps
 5. **Visualization**: Notebook uses Matplotlib instead of TensorBoard for direct comparisons
-6. **Timestep Reduction**: Notebook uses 500K steps (50% of original 1M) for faster experimentation
-7. **Comparison Script**: Added `compare_td3_ddpg.py` for multi-seed statistical analysis
+6. **Comparison Script**: Added `compare_td3_ddpg.py` for multi-seed statistical analysis
 
 ### Code is Representative But Not Identical to Paper
 
