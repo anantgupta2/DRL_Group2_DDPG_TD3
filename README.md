@@ -68,28 +68,14 @@ jupyter notebook
    - Click "Cell" → "Run All" or run cells individually
 
 **Notebook Features:**
-- ✅ Completely self-contained (no external file imports needed)
-- ✅ Mathematical theory and explanations
-- ✅ Full implementations of DDPG and TD3 from source files
-- ✅ Matplotlib-based visualization for comparing learning curves
-- ✅ Automated training and evaluation
-- ✅ Comparative analysis and performance summary tables
-- ✅ Optimized for Reacher-v5 (fastest environment)
-- ✅ Uses 1M timesteps matching original experiments
-
-### Running Python Scripts
-
-For full-scale experiments with multiple environments:
-
-1. **Run a single experiment**:
-```bash
-python main.py --env HalfCheetah-v2
-```
-
-2. **Run all experiments** (reproduces paper results):
-```bash
-./run_experiments.sh
-```
+- Completely self-contained (no external file imports needed)
+- Mathematical theory and explanations
+- Full implementations of DDPG and TD3 from source files
+- Matplotlib-based visualization for comparing learning curves
+- Automated training and evaluation
+- Comparative analysis and performance summary tables
+- Optimized for Reacher-v5 (fastest environment)
+- Uses 1M timesteps matching original experiments
 
 ### Hyperparameters
 
