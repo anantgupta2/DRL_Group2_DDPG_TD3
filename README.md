@@ -67,15 +67,9 @@ jupyter notebook
 3. **Run all cells**:
    - Click "Cell" → "Run All" or run cells individually
 
-**Notebook Features:**
-- Completely self-contained (no external file imports needed)
-- Mathematical theory and explanations
-- Full implementations of DDPG and TD3 from source files
-- Matplotlib-based visualization for comparing learning curves
-- Automated training and evaluation
-- Comparative analysis and performance summary tables
-- Optimized for Reacher-v5 (fastest environment)
-- Uses 1M timesteps matching original experiments
+### Running the code on PACE (To recreate all Experiments)
+```sbatch scripts/queue_all.sh
+```
 
 ### Hyperparameters
 
@@ -117,24 +111,21 @@ python main.py \
 
 ### Environment Performance (1M timesteps)
 
-Based on [results/training_times.csv](results/training_times.csv):
+Based on [results/training_times.csv](results/training_times.csv) and [results/final_rewards.csv](results/final_rewards.csv):
 
-| Environment | Avg Training Time |
-|------------|-------------------|
-| **Reacher-v5** | **~51 min** (fastest) |
-| InvertedPendulum-v5 | ~55 min |
-| HalfCheetah-v5 | ~57 min |
-| InvertedDoublePendulum-v5 | ~58 min |
-| Hopper-v5 | ~58 min |
-| Walker2d-v5 | ~58 min |
-| Ant-v5 | ~73 min |
-| Humanoid-v5 | ~104 min |
+| Environment               | TD3 Reward (±)  | TD3 Time (min ±) | DDPG Reward (±) | DDPG Time (min ±) |
+| ------------------------- | --------------- | ---------------- | --------------- | ----------------- |
+| Ant-v5                    | 3944.0 ± 785.0  | 69.0 ± 0.5       | 1308.5 ± 196.3  | 76.8 ± 0.7        |
+| HalfCheetah-v5            | 11057.6 ± 91.8  | 55.4 ± 0.2       | 9273.9 ± 517.9  | 59.2 ± 0.2        |
+| Hopper-v5                 | 3304.1 ± 88.6   | 56.2 ± 0.6       | 2102.8 ± 442.5  | 59.8 ± 0.2        |
+| InvertedDoublePendulum-v5 | 7695.4 ± 1623.5 | 56.2 ± 0.2       | 9275.6 ± 23.6   | 59.8 ± 0.2        |
+| InvertedPendulum-v5       | 1000.0 ± 0.0    | 53.4 ± 0.2       | 1000.0 ± 0.0    | 57.4 ± 0.2        |
+| Reacher-v5                | -3.1 ± 0.7      | 48.6 ± 0.2       | -5.9 ± 1.6      | 53.2 ± 0.2        |
+| Walker2d-v5               | 4253.9 ± 130.7  | 57.4 ± 0.4       | 1988.5 ± 408.2  | 58.8 ± 0.2        |
 
-Learning curves from the paper can be found under `/learning_curves`. Each file contains 201 evaluations (every 5000 timesteps over 1M steps).
-
-Results are saved as NumPy arrays where each evaluation is the average reward over 10 episodes with no exploration.
 
 ## Visualization
+
 
 ### Notebook Visualization
 The notebook uses **Matplotlib** for visualization:
@@ -162,9 +153,6 @@ This generates comprehensive comparison plots across multiple seeds and environm
 5. **Visualization**: Notebook uses Matplotlib instead of TensorBoard for direct comparisons
 6. **Comparison Script**: Added `compare_td3_ddpg.py` for multi-seed statistical analysis
 
-### Code is Representative But Not Identical to Paper
-
-Minor adjustments have been made to improve performance and compatibility. Learning curves in the paper reflect the original implementation.
 
 ## Citation
 
