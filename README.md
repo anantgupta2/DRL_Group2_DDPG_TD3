@@ -1,9 +1,45 @@
 # Addressing Function Approximation Error in Actor-Critic Methods
 
-PyTorch implementation of Twin Delayed Deep Deterministic Policy Gradients (TD3). If you use our code or data please cite the [paper](https://arxiv.org/abs/1802.09477).
+PyTorch implementation of Twin Delayed Deep Deterministic Policy Gradients (TD3). Forked from the [paper](https://arxiv.org/abs/1802.09477) repository [here](https://github.com/sfujim/TD3).
 
 Method is tested on [MuJoCo](http://www.mujoco.org/) continuous control tasks in [OpenAI gym](https://github.com/openai/gym).
 Networks are trained using [PyTorch 2.9](https://github.com/pytorch/pytorch) and Python 3.9+.
+
+## Reimplementation Results
+We rerun their MuJoCo experiments with the exaact same hyperparameters and get the following results.
+
+### Performance (Time and Final Reward)
+
+Based on [results/training_times.csv](results/training_times.csv) and [results/final_rewards.csv](results/final_rewards.csv):
+
+| Environment               | TD3 Reward (±)  | TD3 Time (min ±) | DDPG Reward (±) | DDPG Time (min ±) |
+| ------------------------- | --------------- | ---------------- | --------------- | ----------------- |
+| Ant-v5                    | 3944.0 ± 785.0  | 69.0 ± 0.5       | 1308.5 ± 196.3  | 76.8 ± 0.7        |
+| HalfCheetah-v5            | 11057.6 ± 91.8  | 55.4 ± 0.2       | 9273.9 ± 517.9  | 59.2 ± 0.2        |
+| Hopper-v5                 | 3304.1 ± 88.6   | 56.2 ± 0.6       | 2102.8 ± 442.5  | 59.8 ± 0.2        |
+| InvertedDoublePendulum-v5 | 7695.4 ± 1623.5 | 56.2 ± 0.2       | 9275.6 ± 23.6   | 59.8 ± 0.2        |
+| InvertedPendulum-v5       | 1000.0 ± 0.0    | 53.4 ± 0.2       | 1000.0 ± 0.0    | 57.4 ± 0.2        |
+| Reacher-v5                | -3.1 ± 0.7      | 48.6 ± 0.2       | -5.9 ± 1.6      | 53.2 ± 0.2        |
+| Walker2d-v5               | 4253.9 ± 130.7  | 57.4 ± 0.4       | 1988.5 ± 408.2  | 58.8 ± 0.2        |
+
+
+### Visualizations
+The [notebook](./DDPG+TD3_notebook.ipynb) provides interactive results and visualizations for Reacher-v5. Here we provide the other results -
+
+![Ant-v5 Comparison](results/Ant-v5_comparison.png)
+
+![HalfCheetah-v5 Comparison](results/HalfCheetah-v5_comparison.png)
+
+![Hopper-v5 Comparison](results/Hopper-v5_comparison.png)
+
+![InvertedPendulum-v5 Comparison](results/InvertedPendulum-v5_comparison.png)
+
+![InvertedDoublePendulum-v5 Comparison](results/InvertedDoublePendulum-v5_comparison.png)
+
+![Reacher-v5 Comparison](results/Reacher-v5_comparison.png)
+
+![Walker2d-v5 Comparison](results/Walker2d-v5_comparison.png)
+
 
 ## Project Structure
 
@@ -107,40 +143,6 @@ python main.py \
 
 **Note**: The notebook uses the exact implementations from DDPG.py and TD3.py for accurate replication of results.
 
-## Results
-
-### Environment Performance (1M timesteps)
-
-Based on [results/training_times.csv](results/training_times.csv) and [results/final_rewards.csv](results/final_rewards.csv):
-
-| Environment               | TD3 Reward (±)  | TD3 Time (min ±) | DDPG Reward (±) | DDPG Time (min ±) |
-| ------------------------- | --------------- | ---------------- | --------------- | ----------------- |
-| Ant-v5                    | 3944.0 ± 785.0  | 69.0 ± 0.5       | 1308.5 ± 196.3  | 76.8 ± 0.7        |
-| HalfCheetah-v5            | 11057.6 ± 91.8  | 55.4 ± 0.2       | 9273.9 ± 517.9  | 59.2 ± 0.2        |
-| Hopper-v5                 | 3304.1 ± 88.6   | 56.2 ± 0.6       | 2102.8 ± 442.5  | 59.8 ± 0.2        |
-| InvertedDoublePendulum-v5 | 7695.4 ± 1623.5 | 56.2 ± 0.2       | 9275.6 ± 23.6   | 59.8 ± 0.2        |
-| InvertedPendulum-v5       | 1000.0 ± 0.0    | 53.4 ± 0.2       | 1000.0 ± 0.0    | 57.4 ± 0.2        |
-| Reacher-v5                | -3.1 ± 0.7      | 48.6 ± 0.2       | -5.9 ± 1.6      | 53.2 ± 0.2        |
-| Walker2d-v5               | 4253.9 ± 130.7  | 57.4 ± 0.4       | 1988.5 ± 408.2  | 58.8 ± 0.2        |
-
-
-## Visualization
-
-
-### Notebook Visualization
-The notebook uses **Matplotlib** for visualization:
-- Comparative learning curves for DDPG vs TD3
-- Performance summary tables
-- Saved plots in `./notebook_results/`
-
-### External Comparison Script
-For detailed multi-seed statistical comparisons, use:
-
-```bash
-python compare_td3_ddpg.py
-```
-
-This generates comprehensive comparison plots across multiple seeds and environments.
 
 ## Project Modifications
 
