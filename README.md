@@ -88,23 +88,19 @@ The project requires the following packages (see `requirements.txt`):
 
 ## Usage
 
-### Running the Jupyter Notebook (Recommended for Quick Start)
+### Running the Jupyter Notebook (Recommended using PACE ICE ondemand for running Jupyter Notebook)
 
 The **DDPG+TD3_notebook.ipynb** provides a self-contained, interactive way to run and compare both algorithms:
 
-1. **Launch Jupyter**:
-```bash
-jupyter notebook
-```
+1. **Open the notebook**:
+   - Navigate to `DDPG+TD3_notebook.ipynb` in your PACE
 
-2. **Open the notebook**:
-   - Navigate to `DDPG+TD3_notebook.ipynb` in your browser
-
-3. **Run all cells**:
+2. **Run all cells**:
    - Click "Cell" → "Run All" or run cells individually
 
 ### Running the code on PACE (To recreate all Experiments)
-```sbatch scripts/queue_all.sh
+```
+sbatch scripts/queue_all.sh
 ```
 
 ### Hyperparameters
