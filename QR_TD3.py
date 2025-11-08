@@ -93,14 +93,16 @@ class QRTD3(object):
 		tau=0.005,
 		policy_noise=0.2,
 		noise_clip=0.5,
-		policy_freq=2
+		policy_freq=2,
+		K= 4,
+		alpha = 0.5
 	):
 
 		self.actor = Actor(state_dim, action_dim, max_action).to(device)
 		self.actor_target = copy.deepcopy(self.actor)
 		self.actor_optimizer = torch.optim.Adam(self.actor.parameters(), lr=3e-4)
 
-		self.critic = Critic(state_dim, action_dim).to(device)
+		self.critic = Critic(state_dim, action_dim, K=K).to(device)
 		self.critic_target = copy.deepcopy(self.critic)
 		self.critic_optimizer = torch.optim.Adam(self.critic.parameters(), lr=3e-4)
 
@@ -110,7 +112,8 @@ class QRTD3(object):
 		self.policy_noise = policy_noise
 		self.noise_clip = noise_clip
 		self.policy_freq = policy_freq
-
+		self.K = K
+		self.alpha = alpha
 		self.total_it = 0
 
 
@@ -156,7 +159,11 @@ class QRTD3(object):
 
 			# Compute actor losse
 			# actor_loss = -self.critic.Q1(state, self.actor(state)).mean()
-			actor_loss = actorLoss(self.critic.Q1(state, self.actor(state)))
+			q1= self.critic.Q1(state, self.actor(state))
+			q1_sorted, _ = torch.sort(q1, dim =-1)
+			m = int(np.ceil(self.alpha * self.K)) if self.alpha > 0 else 1
+			cvar = q1_sorted[:, :m].mean(dim=-1)      # [B], average of lowest m quantiles
+			actor_loss = -cvar.mean()
 			
 			# Optimize the actor 
 			self.actor_optimizer.zero_grad()
