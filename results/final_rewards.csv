@@ -74,3 +74,4 @@ TD3,Hopper-v5,4,3197.161
 DDPG,HalfCheetah-v5,4,9057.032
 DDPG,InvertedDoublePendulum-v5,4,9214.933
 DDPG,Hopper-v5,4,3554.946
+TD3,Humanoid-v5,3,4872.258
