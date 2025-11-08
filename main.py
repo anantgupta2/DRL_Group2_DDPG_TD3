@@ -12,6 +12,7 @@ import utils
 import TD3
 import OurDDPG
 import DDPG
+import QR_TD3
 
 
 def eval_policy(policy, env_name, seed, eval_episodes=10):
@@ -52,6 +53,8 @@ if __name__ == "__main__":
 	parser.add_argument("--policy_freq", default=2, type=int)       # Frequency of delayed policy updates
 	parser.add_argument("--save_model", action="store_true")        # Save model and optimizer parameters
 	parser.add_argument("--load_model", default="")                 # Model load file name, "" doesn't load, "default" uses file_name
+	# parser.add_argument("--alpha", default =0.5)
+	# parser.add_argument("--K", default=4)
 	args = parser.parse_args()
 
 	start_time = time.time()
@@ -95,6 +98,12 @@ if __name__ == "__main__":
 		kwargs["policy_freq"] = args.policy_freq
 		policy = TD3.TD3(**kwargs)
 		print(f"Policy TD3 initialized with state_dim={state_dim}, action_dim={action_dim}, max_action={max_action}")
+	elif args.policy == "QRTD3":
+		kwargs["policy_noise"] = args.policy_noise * max_action
+		kwargs["noise_clip"] = args.noise_clip * max_action
+		kwargs["policy_freq"] = args.policy_freq
+		policy = QR_TD3.QRTD3(**kwargs)
+		print(f"Policy QRTD3 initialized with state_dim={state_dim}, action_dim={action_dim}, max_action={max_action}")
 	elif args.policy == "OurDDPG":
 		policy = OurDDPG.DDPG(**kwargs)
 		print(f"Policy OurDDPG initialized with state_dim={state_dim}, action_dim={action_dim}, max_action={max_action}")
