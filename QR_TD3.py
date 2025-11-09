@@ -33,7 +33,7 @@ class Critic(nn.Module):
 		super(Critic, self).__init__()
 		self.kappa = kappa
 		self.K = K
-		self.taus = ((torch.arange(K) + 0.5)/K).view(1,K)
+		self.taus = ((torch.arange(K, device=device) + 0.5)/K).view(1,K)
 		# Q1 architecture
 		self.l1 = nn.Linear(state_dim + action_dim, 256)
 		self.l2 = nn.Linear(256, 256)
