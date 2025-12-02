@@ -5,7 +5,7 @@
 #SBATCH --time=8:00:00
 #SBATCH --cpus-per-task=4
 #SBATCH --mem=16G
-#SBATCH --gpus-per-node="H100"
+#SBATCH --gpus-per-node="V100"
 
 module load python cuda
 source ~/scratch/python-envs/drl_env/bin/activate

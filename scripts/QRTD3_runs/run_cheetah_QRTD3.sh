@@ -1,11 +1,11 @@
 #!/bin/bash
 #SBATCH --job-name=cheetah_QRTD3
-#SBATCH --output=/home/hice1/agupta886/scratch/slurm_outputs/cheetah_QRTD3.out
-#SBATCH --error=/home/hice1/agupta886/scratch/slurm_errors/cheetah_QRTD3.err
+#SBATCH --output=/home/hice1/usingh68/scratch/slurm_outputs/cheetah_QRTD3.out
+#SBATCH --error=/home/hice1/usingh68/scratch/slurm_errors/cheetah_QRTD3.err
 #SBATCH --time=6:00:00
 #SBATCH --cpus-per-task=4
 #SBATCH --mem=16G
-#SBATCH --gpus-per-node="H100"
+#SBATCH --gpus-per-node="V100"
 
 module load python cuda
 source ~/scratch/python-envs/drl_env/bin/activate

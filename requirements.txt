@@ -1,8 +1,8 @@
-gymnasium==1.2.1
-matplotlib==3.10.7
-numpy==2.3.4
-torch==2.9.0+cu126
-tqdm==4.67.1
+gymnasium
+matplotlib
+numpy
+torch
+tqdm
 tensorboard
 jupyter
 ipykernel
