@@ -11,7 +11,7 @@ def smooth(data, window):
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--envs", nargs='+', default=['Ant-v5', 'InvertedPendulum-v5', 'Walker2d-v5', 'HalfCheetah-v5', 'Hopper-v5', 'Reacher-v5', 'InvertedDoublePendulum-v5'], help="List of environment names")
+    parser.add_argument("--envs", nargs='+', default=['Walker2d-v5', 'Hopper-v5', 'InvertedDoublePendulum-v5'], help="List of environment names")
     parser.add_argument("--smooth_window", type=int, default=5, help="Window size for smoothing (1 = no smoothing)")
     args = parser.parse_args()
 
@@ -21,8 +21,7 @@ def main():
             print(f"No results found for environment {env}")
             continue
 
-        policies = [d for d in os.listdir(env_dir) if os.path.isdir(os.path.join(env_dir, d))]
-        
+        policies = ['GaussianTD3/0.1', 'GaussianTD3/0.25', 'GaussianTD3/0.5', 'GaussianTD3/0.75', 'GaussianTD3/0.9']
         if not policies:
             print(f"No policies found in {env_dir}")
             continue
@@ -66,8 +65,8 @@ def main():
         plt.title(f'Policy Comparison on {env} (Averaged over Seeds)')
         plt.legend()
         plt.grid(True)
-        plt.savefig(f"./results/{env}_comparison.png")
-        print(f"Plot saved to ./results/{env}_comparison.png")
+        plt.savefig(f"./results/{env}_comparison_of_alpha.png")
+        print(f"Plot saved to ./results/{env}_comparison_of_alpha.png")
 
         # Print final means
         print("\nFinal Average Rewards:")

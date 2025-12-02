@@ -7,13 +7,12 @@ from tqdm import tqdm
 import csv
 import matplotlib.pyplot as plt
 import time
-
 import utils
 import TD3
 import OurDDPG
 import DDPG
 import QR_TD3
-
+import Gaussian_TD3
 
 def eval_policy(policy, env_name, seed, eval_episodes=10):
 	eval_env = gym.make(env_name)
@@ -53,8 +52,8 @@ if __name__ == "__main__":
 	parser.add_argument("--policy_freq", default=2, type=int)       # Frequency of delayed policy updates
 	parser.add_argument("--save_model", action="store_true")        # Save model and optimizer parameters
 	parser.add_argument("--load_model", default="")                 # Model load file name, "" doesn't load, "default" uses file_name
-	# parser.add_argument("--alpha", default =0.5)
-	# parser.add_argument("--K", default=4)
+	parser.add_argument("--alpha", default =0.5)
+	parser.add_argument("--K", default=5)
 	args = parser.parse_args()
 
 	start_time = time.time()
@@ -102,8 +101,17 @@ if __name__ == "__main__":
 		kwargs["policy_noise"] = args.policy_noise * max_action
 		kwargs["noise_clip"] = args.noise_clip * max_action
 		kwargs["policy_freq"] = args.policy_freq
+		kwargs['K'] = int(args.K)
+		kwargs['alpha'] = float(args.alpha)
 		policy = QR_TD3.QRTD3(**kwargs)
 		print(f"Policy QRTD3 initialized with state_dim={state_dim}, action_dim={action_dim}, max_action={max_action}")
+	elif args.policy == "GaussianTD3":
+		kwargs["policy_noise"] = args.policy_noise * max_action
+		kwargs["noise_clip"] = args.noise_clip * max_action
+		kwargs["policy_freq"] = args.policy_freq
+		kwargs['alpha'] = float(args.alpha)
+		policy = Gaussian_TD3.GaussianTD3(**kwargs)
+		print(f"Policy Gaussian TD3 initialized with state_dim={state_dim}, action_dim={action_dim}, max_action={max_action}")
 	elif args.policy == "OurDDPG":
 		policy = OurDDPG.DDPG(**kwargs)
 		print(f"Policy OurDDPG initialized with state_dim={state_dim}, action_dim={action_dim}, max_action={max_action}")
@@ -170,7 +178,7 @@ if __name__ == "__main__":
 		# Evaluate episode
 		if (t + 1) % args.eval_freq == 0:
 			evaluations.append(eval_policy(policy, args.env, args.seed))
-			os.makedirs(f"./results/{args.env}/{args.policy}", exist_ok=True)
+			os.makedirs(f"./results/{args.env}/New_{args.policy}", exist_ok=True)
 			if args.save_model: policy.save(f"./models/{file_name}")
 
 	print("Training completed.")
@@ -179,11 +187,11 @@ if __name__ == "__main__":
 	hours = int(duration // 3600)
 	minutes = int((duration % 3600) // 60)
 	time_str = f"{hours:02d}:{minutes:02d}"
-	np.save(f"./results/{args.env}/{args.policy}/{args.seed}.npy", evaluations)
+	np.save(f"./results/{args.env}/New_{args.policy}/{args.seed}.npy", evaluations)
 	print(f"Final evaluation: {evaluations[-1]:.3f}")
 	if args.save_model:
 		print(f"Model saved to ./models/{file_name}")
-	print(f"Results saved to ./results/{args.env}/{args.policy}/{args.seed}.npy")
+	print(f"Results saved to ./results/{args.env}/New_{args.policy}/{args.seed}.npy")
 
 	# Append to final rewards table
 	final_rewards_file = "./results/final_rewards.csv"
