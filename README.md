@@ -6,7 +6,7 @@ Method is tested on [MuJoCo](http://www.mujoco.org/) continuous control tasks in
 Networks are trained using [PyTorch 2.9](https://github.com/pytorch/pytorch) and Python 3.9+.
 
 ## Reimplementation Results
-We rerun their MuJoCo experiments with the exaact same hyperparameters and get the following results.
+We rerun their MuJoCo experiments with the exact same hyperparameters and get the following results.
 
 ### Performance (Time and Final Reward)
 
@@ -24,7 +24,7 @@ Based on [results/training_times.csv](results/training_times.csv) and [results/f
 
 
 ### Visualizations
-The [notebook](./DDPG+TD3_notebook.ipynb) provides interactive results and visualizations for Reacher-v5. Here we provide the other results -
+The [notebook](./algorithm_comparison.ipynb) provides an interactive way to run and compare all algorithms. Here we provide comparison plots for all environments:
 
 ![Ant-v5 Comparison](results/Ant-v5_comparison.png)
 
@@ -46,9 +46,13 @@ The [notebook](./DDPG+TD3_notebook.ipynb) provides interactive results and visua
 - `DDPG.py` - Original DDPG implementation (400-300 architecture)
 - `OurDDPG.py` - Re-tuned DDPG implementation (256-256 architecture)
 - `TD3.py` - TD3 implementation with twin critics
+- `QR_TD3.py` - Quantile Regression TD3 implementation
+- `Gaussian_TD3.py` - Gaussian TD3 implementation
 - `utils.py` - Replay buffer implementation
 - `main.py` - Training script for running experiments
-- `DDPG+TD3_notebook.ipynb` - **Self-contained Jupyter notebook for experimentation**
+- `plot_results.py` - Script for generating comparison plots
+- `compare_td3_ddpg.py` - Multi-seed statistical comparison script
+- `algorithm_comparison.ipynb` - **Jupyter notebook for interactive experimentation** (imports from Python files)
 
 ## Installation
 
@@ -77,38 +81,50 @@ pip install -r requirements.txt
 ### Dependencies
 
 The project requires the following packages (see `requirements.txt`):
-- `gymnasium==1.2.1` - OpenAI Gym environments
-- `matplotlib==3.10.7` - Plotting and visualization
-- `numpy==2.3.4` - Numerical computations
-- `torch==2.9.0+cu126` - PyTorch with CUDA support
-- `tqdm==4.67.1` - Progress bars
+- `gymnasium` - OpenAI Gym environments (with MuJoCo support via `gymnasium[mujoco]`)
+- `matplotlib` - Plotting and visualization
+- `numpy` - Numerical computations
+- `torch` - PyTorch (CUDA support recommended for GPU training)
+- `tqdm` - Progress bars
 - `tensorboard` - TensorBoard logging and visualization
 - `jupyter` - Jupyter notebook interface
 - `ipykernel` - Jupyter kernel for Python
 
+**Note**: For macOS, install PyTorch CPU version. For Linux/Windows with CUDA, install CUDA-enabled PyTorch.
+
 ## Usage
 
-### Running the Jupyter Notebook (Recommended using PACE ICE ondemand for running Jupyter Notebook)
+### Running the Jupyter Notebook
 
-The **DDPG+TD3_notebook.ipynb** provides a self-contained, interactive way to run and compare both algorithms:
+The **algorithm_comparison.ipynb** notebook provides an interactive way to run and compare all algorithms:
 
 1. **Open the notebook**:
-   - Navigate to `DDPG+TD3_notebook.ipynb` in your PACE
+   - Open `algorithm_comparison.ipynb` in Jupyter/VS Code
+   - Select a Python kernel with the required packages installed
 
-2. **Run all cells**:
-   - Click "Cell" → "Run All" or run cells individually
+2. **Configure and run**:
+   - Follow the setup instructions in the first cell of the notebook
+   - Set `ENV_NAME`, `SEED`, and `POLICY` in the configuration cell
+   - Run all cells sequentially
+   - Change `POLICY` to compare different algorithms
 
-### Running the code on PACE (To recreate all Experiments)
+The notebook includes setup instructions in the first cell.
+
+### Running Experiments via Command Line
+
+#### Minimal Example
+
+Run a single experiment with default hyperparameters:
+
+```bash
+python main.py --policy TD3 --env Reacher-v5 --seed 0
 ```
-sbatch scripts/queue_all.sh
-```
 
-### Hyperparameters
-
-Modify hyperparameters via command-line arguments to `main.py`:
+#### Full Example with All Hyperparameters
 
 ```bash
 python main.py \
+  --policy TD3 \
   --env Reacher-v5 \
   --seed 0 \
   --max_timesteps 1000000 \
@@ -123,21 +139,67 @@ python main.py \
   --expl_noise 0.1
 ```
 
+#### QRTD3 and GaussianTD3 Additional Parameters
+
+For QRTD3 and GaussianTD3, you can also specify:
+- `--alpha` (default: 0.5) - Risk parameter for QRTD3/GaussianTD3
+- `--K` (default: 5) - Number of quantiles for QRTD3
+
+```bash
+python main.py \
+  --policy QRTD3 \
+  --env Reacher-v5 \
+  --seed 0 \
+  --alpha 0.5 \
+  --K 5
+```
+
+### Running on PACE (To recreate all Experiments)
+
+To run all experiments on PACE:
+
+```bash
+sbatch scripts/queue_all.sh
+```
+
+This will submit jobs for:
+- `queue_relevant.sh` - Ant, Walker, InvertedPendulum (TD3 and DDPG)
+- `queue_other.sh` - Other environments (TD3 and DDPG)
+
+To run specific algorithm variants:
+
+```bash
+sbatch scripts/run_qrtd3.sh      # QRTD3 experiments
+sbatch scripts/run_gaussiantd3.sh  # GaussianTD3 experiments
+```
+
+#### Supported Policies
+
+The `--policy` argument accepts one of the following:
+- `TD3` - Twin Delayed Deep Deterministic Policy Gradient (default)
+- `DDPG` - Deep Deterministic Policy Gradient (original 400-300 architecture)
+- `OurDDPG` - Re-tuned DDPG (256-256 architecture)
+- `QRTD3` - Quantile Regression TD3
+- `GaussianTD3` - Gaussian TD3
+
+**Note**: If `--policy` is not specified, `TD3` is used by default.
+
 ## Algorithms Comparison
 
-### DDPG vs TD3
+### Algorithm Variants
 
-| Feature | DDPG (DDPG.py) | OurDDPG (OurDDPG.py) | TD3 (TD3.py) |
-|---------|----------------|---------------------|--------------|
-| **Architecture** | 400-300 | 256-256 | 256-256 (twin) |
-| **Learning Rate** | 1e-4 (actor) | 3e-4 | 3e-4 |
-| **Tau** | 0.001 | 0.005 | 0.005 |
-| **Batch Size** | 64 | 256 | 256 |
-| **Critic Networks** | Single | Single | Twin (Q1, Q2) |
-| **Policy Updates** | Every step | Every step | Delayed (every 2 steps) |
-| **Target Smoothing** | No | No | Yes |
+| Feature | DDPG (DDPG.py) | OurDDPG (OurDDPG.py) | TD3 (TD3.py) | QRTD3 (QR_TD3.py) | GaussianTD3 (Gaussian_TD3.py) |
+|---------|----------------|---------------------|--------------|-------------------|------------------------------|
+| **Architecture** | 400-300 | 256-256 | 256-256 (twin) | 256-256 (twin) | 256-256 (twin) |
+| **Learning Rate** | 1e-4 (actor) | 3e-4 | 3e-4 | 3e-4 | 3e-4 |
+| **Tau** | 0.001 | 0.005 | 0.005 | 0.005 | 0.005 |
+| **Batch Size** | 64 | 256 | 256 | 256 | 256 |
+| **Critic Networks** | Single | Single | Twin (Q1, Q2) | Twin (Quantile) | Twin (Gaussian) |
+| **Policy Updates** | Every step | Every step | Delayed (every 2 steps) | Delayed (every 2 steps) | Delayed (every 2 steps) |
+| **Target Smoothing** | No | No | Yes | Yes | Yes |
+| **Special Features** | - | - | Clipped Double Q-Learning | Quantile Regression | Gaussian Distribution |
 
-**Note**: The notebook uses the exact implementations from DDPG.py and TD3.py for accurate replication of results.
+**Note**: All implementations use the exact code from their respective files for accurate replication of results.
 
 
 ## Project Modifications
@@ -147,9 +209,10 @@ python main.py \
 1. **Environment Updates**: Updated from `gym` to `gymnasium` (v1.2.1)
 2. **Environment Names**: Changed from `-v2` to `-v5` (e.g., `HalfCheetah-v2` → `HalfCheetah-v5`)
 3. **PyTorch Version**: Updated to PyTorch 2.9 with CUDA 12.6 support
-4. **Notebook Added**: New self-contained Jupyter notebook for easy experimentation with 1M timesteps
-5. **Visualization**: Notebook uses Matplotlib instead of TensorBoard for direct comparisons
-6. **Comparison Script**: Added `compare_td3_ddpg.py` for multi-seed statistical analysis
+4. **Algorithm Extensions**: Added QRTD3 (Quantile Regression TD3) and GaussianTD3 variants
+5. **Notebook Added**: New Jupyter notebook (`algorithm_comparison.ipynb`) that imports from Python files for easy experimentation
+6. **Visualization**: Uses Matplotlib for direct comparisons and plotting
+7. **Comparison Scripts**: Added `compare_td3_ddpg.py` for multi-seed statistical analysis and `plot_results.py` for generating comparison plots
 
 
 ## Citation
