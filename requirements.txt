@@ -7,3 +7,5 @@ tensorboard
 jupyter
 ipykernel
 gymnasium[mujoco]
+scipy
+pandas
