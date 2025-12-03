@@ -9,3 +9,4 @@ ipykernel
 gymnasium[mujoco]
 scipy
 pandas
+seaborn
