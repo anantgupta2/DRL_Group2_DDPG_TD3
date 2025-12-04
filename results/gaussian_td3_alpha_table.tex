@@ -1,0 +1,14 @@
+\begin{table}[ht]
+    \centering
+    \begin{tabular}{lccccc}
+        \hline
+        Environment & $\alpha=0.1$ & $\alpha=0.25$ & $\alpha=0.5$ & $\alpha=0.75$ & $\alpha=0.9$ \\
+        \hline
+        Hopper-v5 & 3506.1 $\pm$ 72.5 & 2653.4 $\pm$ 525.0 & 3456.8 $\pm$ 102.8 & 3374.4 $\pm$ 11.3 & 3381.6 $\pm$ 8.4 \\
+        InvertedDoublePendulum-v5 & 9314.2 $\pm$ 0.2 & 9332.7 $\pm$ 5.0 & 9320.1 $\pm$ 3.7 & 9323.4 $\pm$ 1.5 & 9331.1 $\pm$ 11.4 \\
+        Walker2d-v5 & 3826.1 $\pm$ 726.9 & 5113.5 $\pm$ 190.9 & 3917.5 $\pm$ 563.3 & 5204.1 $\pm$ 273.8 & 4583.1 $\pm$ 391.3 \\
+        \hline
+    \end{tabular}
+    \caption{Final average return (mean $\pm$ standard error over seeds) for different $\alpha$ values in GaussianTD3.}
+    \label{tab:gaussian_td3_alpha}
+\end{table}
