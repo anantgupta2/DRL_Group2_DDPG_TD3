@@ -178,7 +178,7 @@ if __name__ == "__main__":
 		# Evaluate episode
 		if (t + 1) % args.eval_freq == 0:
 			evaluations.append(eval_policy(policy, args.env, args.seed))
-			os.makedirs(f"./results/{args.env}/New_{args.policy}", exist_ok=True)
+			os.makedirs(f"./results/{args.env}/{args.policy}", exist_ok=True)
 			if args.save_model: policy.save(f"./models/{file_name}")
 
 	print("Training completed.")
@@ -187,11 +187,11 @@ if __name__ == "__main__":
 	hours = int(duration // 3600)
 	minutes = int((duration % 3600) // 60)
 	time_str = f"{hours:02d}:{minutes:02d}"
-	np.save(f"./results/{args.env}/New_{args.policy}/{args.seed}.npy", evaluations)
+	np.save(f"./results/{args.env}/{args.policy}/{args.seed}.npy", evaluations)
 	print(f"Final evaluation: {evaluations[-1]:.3f}")
 	if args.save_model:
 		print(f"Model saved to ./models/{file_name}")
-	print(f"Results saved to ./results/{args.env}/New_{args.policy}/{args.seed}.npy")
+	print(f"Results saved to ./results/{args.env}/{args.policy}/{args.seed}.npy")
 
 	# Append to final rewards table
 	final_rewards_file = "./results/final_rewards.csv"

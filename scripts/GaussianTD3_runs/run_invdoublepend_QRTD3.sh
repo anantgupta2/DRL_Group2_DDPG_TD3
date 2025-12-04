@@ -18,5 +18,5 @@ do
 	--env "InvertedDoublePendulum-v5" \
 	--seed $i \
 	--start_timesteps 1000 \
-	--alpha 0.9
+	--alpha 0.75
 done
