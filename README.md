@@ -10,7 +10,7 @@ We rerun their MuJoCo experiments with the exact same hyperparameters and get th
 
 ### Performance (Time and Final Reward)
 
-Based on [results/training_times.csv](results/training_times.csv) and [results/final_rewards.csv](results/final_rewards.csv):
+Based on [results/final_rewards_table.tex](results/final_rewards_table.tex) and [results/final_rewards.csv](results/final_rewards.csv):
 
 | Environment               | TD3 Reward (±)  | TD3 Time (min ±) | DDPG Reward (±) | DDPG Time (min ±) |
 | ------------------------- | --------------- | ---------------- | --------------- | ----------------- |
@@ -50,9 +50,10 @@ The [notebook](./algorithm_comparison.ipynb) provides an interactive way to run 
 - `Gaussian_TD3.py` - Gaussian TD3 implementation
 - `utils.py` - Replay buffer implementation
 - `main.py` - Training script for running experiments
-- `plot_results.py` - Script for generating comparison plots
+- `plot_results.py`, `plot_results_alpha.py`, `plot_results_k.py` - Script for generating comparison plots
 - `compare_td3_ddpg.py` - Multi-seed statistical comparison script
 - `algorithm_comparison.ipynb` - **Jupyter notebook for interactive experimentation** (imports from Python files)
+- `log_files` folder - Folder with log files from different experiments
 
 ## Installation
 
@@ -165,6 +166,8 @@ sbatch scripts/queue_all.sh
 This will submit jobs for:
 - `queue_relevant.sh` - Ant, Walker, InvertedPendulum (TD3 and DDPG)
 - `queue_other.sh` - Other environments (TD3 and DDPG)
+- `run_gaussiantd3.sh` - Gaussain TD3 experiments
+- `run_qrtd3.sh` - Quantile TD3 experiments
 
 To run specific algorithm variants:
 
@@ -232,6 +235,7 @@ The `--policy` argument accepts one of the following:
 - [TD3 Paper](https://arxiv.org/abs/1802.09477)
 - [DDPG Paper](https://arxiv.org/abs/1509.02971)
 - [TD3 Official Implementation](https://github.com/sfujim/TD3)
+- [DQN Paper](https://arxiv.org/pdf/1710.10044)
 - [OpenAI Baselines](https://github.com/openai/baselines) - For DDPG, PPO, TRPO, ACKTR comparisons
 - [Learned Agent Video](https://youtu.be/x33Vw-6vzso)
 
