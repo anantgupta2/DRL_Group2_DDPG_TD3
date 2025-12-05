@@ -8,24 +8,6 @@ Networks are trained using [PyTorch 2.9](https://github.com/pytorch/pytorch) and
 ## Reimplementation Results
 We rerun their MuJoCo experiments with the exact same hyperparameters and get the following results.
 
-### Performance (Time and Final Reward)
-
-**Table 1: Performance Comparison (Time and Final Reward) between TD3 and DDPG across MuJoCo environments.**
-
-Based on [results/training_times.csv](results/training_times.csv) and [results/final_rewards.csv](results/final_rewards.csv):
-
-| Environment               | TD3             |                  | DDPG             |                  |
-| ------------------------- | --------------- | ---------------- | ---------------- | ---------------- |
-|                           | Reward          | Time (min)       | Reward           | Time (min)       |
-| Ant-v5                    | 3944.0 ± 785.0  | 69.0 ± 0.5       | 1308.5 ± 196.3   | 76.8 ± 0.7       |
-| HalfCheetah-v5            | 11057.6 ± 91.8  | 55.4 ± 0.2       | 9273.9 ± 517.9   | 59.2 ± 0.2       |
-| Hopper-v5                 | 3304.1 ± 88.6   | 56.2 ± 0.6       | 2102.8 ± 442.5   | 59.8 ± 0.2       |
-| InvertedDoublePendulum-v5 | 7695.4 ± 1623.5 | 56.2 ± 0.2       | 9275.6 ± 23.6    | 59.8 ± 0.2       |
-| InvertedPendulum-v5       | 1000.0 ± 0.0    | 53.4 ± 0.2       | 1000.0 ± 0.0     | 57.4 ± 0.2       |
-| Reacher-v5                | -3.1 ± 0.7      | 48.6 ± 0.2       | -5.9 ± 1.6       | 53.2 ± 0.2       |
-| Walker2d-v5               | 4253.9 ± 130.7  | 57.4 ± 0.4       | 1988.5 ± 408.2   | 58.8 ± 0.2       |
-
-
 ### Visualizations
 The [notebook](./algorithm_comparison.ipynb) provides an interactive way to run and compare all algorithms. Here we provide comparison plots for all environments:
 
@@ -204,6 +186,21 @@ The `--policy` argument accepts one of the following:
 
 **Note**: All implementations use the exact code from their respective files for accurate replication of results.
 
+## Final Results
+
+**Table 3: Final Average Return (Mean ± Standard Error over Five Seeds)**
+
+| Environment               | DDPG              | TD3               | GaussianTD3       | QRTD3             |
+| ------------------------- | ----------------- | ----------------- | ----------------- | ----------------- |
+| Ant-v5                    | 1308.5 ± 175.6    | 3944.0 ± 702.1    | **4144.8 ± 743.8** | 3458.9 ± 821.7    |
+| HalfCheetah-v5            | 9273.9 ± 463.2    | **11057.6 ± 82.1** | 10438.3 ± 637.2   | 9114.3 ± 331.7    |
+| Hopper-v5                 | 2102.8 ± 395.8    | 3304.1 ± 79.3     | **3374.4 ± 11.3**  | 3260.6 ± 83.4     |
+| InvertedDoublePendulum-v5 | 9275.6 ± 21.1     | 7695.4 ± 1452.1   | **9323.4 ± 1.5**   | 9316.6 ± 0.7      |
+| InvertedPendulum-v5       | 1000.0 ± 0.0      | 1000.0 ± 0.0      | 813.0 ± 167.3     | **1000.0 ± 0.0**  |
+| Reacher-v5                | -5.9 ± 1.5        | **-3.1 ± 0.6**     | -3.3 ± 0.6        | -3.3 ± 0.7        |
+| Walker2d-v5               | 1988.5 ± 365.1    | 4253.9 ± 116.9    | **5204.1 ± 273.8** | 2390.7 ± 446.0    |
+
+*Note: Bold values indicate the best performance for each environment.*
 
 ## Project Modifications
 
