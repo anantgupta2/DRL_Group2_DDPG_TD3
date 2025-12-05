@@ -5,29 +5,43 @@ PyTorch implementation of Twin Delayed Deep Deterministic Policy Gradients (TD3)
 Method is tested on [MuJoCo](http://www.mujoco.org/) continuous control tasks in [OpenAI gym](https://github.com/openai/gym).
 Networks are trained using [PyTorch 2.9](https://github.com/pytorch/pytorch) and Python 3.9+.
 
-## Final Results
-
-**Final Average Return (Mean ± Standard Error over Five Seeds)**
-
-| Environment               | DDPG              | TD3               | GaussianTD3       | QRTD3             |
-| ------------------------- | ----------------- | ----------------- | ----------------- | ----------------- |
-| Ant-v5                    | 1308.5 ± 175.6    | 3944.0 ± 702.1    | **4144.8 ± 743.8** | 3458.9 ± 821.7    |
-| HalfCheetah-v5            | 9273.9 ± 463.2    | **11057.6 ± 82.1** | 10438.3 ± 637.2   | 9114.3 ± 331.7    |
-| Hopper-v5                 | 2102.8 ± 395.8    | 3304.1 ± 79.3     | **3374.4 ± 11.3**  | 3260.6 ± 83.4     |
-| InvertedDoublePendulum-v5 | 9275.6 ± 21.1     | 7695.4 ± 1452.1   | **9323.4 ± 1.5**   | 9316.6 ± 0.7      |
-| InvertedPendulum-v5       | 1000.0 ± 0.0      | 1000.0 ± 0.0      | 813.0 ± 167.3     | **1000.0 ± 0.0**  |
-| Reacher-v5                | -5.9 ± 1.5        | **-3.1 ± 0.6**     | -3.3 ± 0.6        | -3.3 ± 0.7        |
-| Walker2d-v5               | 1988.5 ± 365.1    | 4253.9 ± 116.9    | **5204.1 ± 273.8** | 2390.7 ± 446.0    |
-
-*Note: Bold values indicate the best performance for each environment.*
-
 ## Reimplementation Results
 We rerun their MuJoCo experiments with the exact same hyperparameters and get the following results.
+
+### Performance (Time and Final Reward)
+
+Based on [results/final_rewards_table.tex](results/final_rewards_table.tex) and [results/final_rewards.csv](results/final_rewards.csv):
+
+| Environment               | TD3 Reward (±)  | TD3 Time (min ±) | DDPG Reward (±) | DDPG Time (min ±) |
+| ------------------------- | --------------- | ---------------- | --------------- | ----------------- |
+| Ant-v5                    | 3944.0 ± 785.0  | 69.0 ± 0.5       | 1308.5 ± 196.3  | 76.8 ± 0.7        |
+| HalfCheetah-v5            | 11057.6 ± 91.8  | 55.4 ± 0.2       | 9273.9 ± 517.9  | 59.2 ± 0.2        |
+| Hopper-v5                 | 3304.1 ± 88.6   | 56.2 ± 0.6       | 2102.8 ± 442.5  | 59.8 ± 0.2        |
+| InvertedDoublePendulum-v5 | 7695.4 ± 1623.5 | 56.2 ± 0.2       | 9275.6 ± 23.6   | 59.8 ± 0.2        |
+| InvertedPendulum-v5       | 1000.0 ± 0.0    | 53.4 ± 0.2       | 1000.0 ± 0.0    | 57.4 ± 0.2        |
+| Reacher-v5                | -3.1 ± 0.7      | 48.6 ± 0.2       | -5.9 ± 1.6      | 53.2 ± 0.2        |
+| Walker2d-v5               | 4253.9 ± 130.7  | 57.4 ± 0.4       | 1988.5 ± 408.2  | 58.8 ± 0.2        |
+
 
 ### Visualizations
 The [notebook](./algorithm_comparison.ipynb) provides an interactive way to run and compare all algorithms. Here we provide comparison plots for all environments:
 
-![Ant-v5 Comparison](results/Ant-v5_comparison.png)
+Here we provide comparison plots for all environments:
+
+<p align="center">
+  <img src="results/Ant-v5_comparison.png" width="23%" />
+  <img src="results/HalfCheetah-v5_comparison.png" width="23%" />
+  <img src="results/Hopper-v5_comparison.png" width="23%" />
+  <img src="results/InvertedPendulum-v5_comparison.png" width="23%" />
+</p>
+
+<p align="center">
+  <img src="results/InvertedDoublePendulum-v5_comparison.png" width="30%" />
+  <img src="results/Reacher-v5_comparison.png" width="30%" />
+  <img src="results/Walker2d-v5_comparison.png" width="30%" />
+</p>
+
+<!-- ![Ant-v5 Comparison](results/Ant-v5_comparison.png)
 
 ![HalfCheetah-v5 Comparison](results/HalfCheetah-v5_comparison.png)
 
@@ -39,7 +53,7 @@ The [notebook](./algorithm_comparison.ipynb) provides an interactive way to run 
 
 ![Reacher-v5 Comparison](results/Reacher-v5_comparison.png)
 
-![Walker2d-v5 Comparison](results/Walker2d-v5_comparison.png)
+![Walker2d-v5 Comparison](results/Walker2d-v5_comparison.png) -->
 
 
 ## Project Structure
@@ -122,25 +136,6 @@ Run a single experiment with default hyperparameters:
 python main.py --policy TD3 --env Reacher-v5 --seed 0
 ```
 
-#### Full Example with All Hyperparameters
-
-```bash
-python main.py \
-  --policy TD3 \
-  --env Reacher-v5 \
-  --seed 0 \
-  --max_timesteps 1000000 \
-  --start_timesteps 25000 \
-  --eval_freq 5000 \
-  --batch_size 256 \
-  --discount 0.99 \
-  --tau 0.005 \
-  --policy_noise 0.2 \
-  --noise_clip 0.5 \
-  --policy_freq 2 \
-  --expl_noise 0.1
-```
-
 #### QRTD3 and GaussianTD3 Additional Parameters
 
 For QRTD3 and GaussianTD3, you can also specify:
@@ -205,6 +200,7 @@ The `--policy` argument accepts one of the following:
 
 **Note**: All implementations use the exact code from their respective files for accurate replication of results.
 
+
 ## Project Modifications
 
 ### Changes from Original TD3 Paper Repository
@@ -238,6 +234,20 @@ The `--policy` argument accepts one of the following:
 - [DQN Paper](https://arxiv.org/pdf/1710.10044)
 - [OpenAI Baselines](https://github.com/openai/baselines) - For DDPG, PPO, TRPO, ACKTR comparisons
 - [Learned Agent Video](https://youtu.be/x33Vw-6vzso)
+
+## Troubleshooting
+
+### CUDA Out of Memory
+Reduce batch size in hyperparameters:
+```python
+batch_size = 128  # Instead of 256
+```
+
+### Jupyter Kernel Dies
+Reduce max_timesteps or eval_freq to lower memory usage:
+```python
+max_timesteps = int(2e5)  # Instead of 5e5
+```
 
 ## License
 
