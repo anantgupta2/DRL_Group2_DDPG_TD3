@@ -29,15 +29,15 @@ The [notebook](./algorithm_comparison.ipynb) provides an interactive way to run 
 Here we provide comparison plots for all environments:
 
 <p align="center">
-  <img src="results/Ant-v5_comparison.png" width="33%" />
-  <img src="results/Hopper-v5_comparison.png" width="33%" />
-  <img src="results/InvertedPendulum-v5_comparison.png" width="33%" />
+  <img src="results/Ant-v5_comparison.png" width="30%" />
+  <img src="results/Hopper-v5_comparison.png" width="30%" />
+  <img src="results/InvertedPendulum-v5_comparison.png" width="30%" />
 </p>
 
 <p align="center">
-  <img src="results/InvertedDoublePendulum-v5_comparison.png" width="33%" />
-  <img src="results/Reacher-v5_comparison.png" width="33%" />
-  <img src="results/Walker2d-v5_comparison.png" width="33%" />
+  <img src="results/InvertedDoublePendulum-v5_comparison.png" width="30%" />
+  <img src="results/Reacher-v5_comparison.png" width="30%" />
+  <img src="results/Walker2d-v5_comparison.png" width="30%" />
 </p>
 
 <!-- ![Ant-v5 Comparison](results/Ant-v5_comparison.png)
