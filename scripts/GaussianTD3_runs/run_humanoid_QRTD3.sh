@@ -13,8 +13,9 @@ cd ~/scratch/DRL_Group2_DDPG_TD3
 
 for ((i=0;i<5;i+=1))
 do 
-	python main.py \
+	python main2.py \
 	--policy "GaussianTD3" \
 	--env "Humanoid-v5" \
-	--seed $i
+	--seed $i \
+	--alpha 0.75
 done

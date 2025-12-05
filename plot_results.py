@@ -11,9 +11,34 @@ def smooth(data, window):
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--envs", nargs='+', default=['Ant-v5', 'InvertedPendulum-v5', 'Walker2d-v5', 'HalfCheetah-v5', 'Hopper-v5', 'Reacher-v5', 'InvertedDoublePendulum-v5'], help="List of environment names")
-    parser.add_argument("--smooth_window", type=int, default=5, help="Window size for smoothing (1 = no smoothing)")
+    parser.add_argument(
+        "--envs",
+        nargs='+',
+        default=[
+            'Ant-v5',
+            'InvertedPendulum-v5',
+            'Walker2d-v5',
+            'HalfCheetah-v5',
+            'Hopper-v5',
+            'Reacher-v5',
+            'InvertedDoublePendulum-v5'
+        ],
+        help="List of environment names",
+    )
+    parser.add_argument(
+        "--smooth_window",
+        type=int,
+        default=5,
+        help="Window size for smoothing (1 = no smoothing)",
+    )
     args = parser.parse_args()
+
+    # Fix the order of policies for both plotting and table
+    policies = ['DDPG', 'TD3', 'GaussianTD3', 'QRTD3']
+
+    # For collecting final results across all envs for LaTeX table
+    # table_data[env][policy] = (mean_final, std_error_final)
+    table_data = {}
 
     for env in args.envs:
         env_dir = f"./results/{env}"
@@ -21,13 +46,10 @@ def main():
             print(f"No results found for environment {env}")
             continue
 
-        policies = [d for d in os.listdir(env_dir) if os.path.isdir(os.path.join(env_dir, d))]
-        
-        if not policies:
-            print(f"No policies found in {env_dir}")
-            continue
-
         plt.figure(figsize=(12, 8))
+
+        # For this environment only
+        env_results = {}
 
         for policy in sorted(policies):
             policy_dir = os.path.join(env_dir, policy)
@@ -56,33 +78,103 @@ def main():
                 mean_to_plot = mean_rewards
                 std_to_plot = std_errors
 
-            timesteps = np.array([0 if i == 0 else i * 5000 for i in range(len(mean_rewards))])  # Assuming eval_freq=5000, adjust if needed
+            timesteps = np.array(
+                [0 if i == 0 else i * 5000 for i in range(len(mean_rewards))]
+            )  # Assuming eval_freq=5000, adjust if needed
 
             plt.plot(timesteps, mean_to_plot, label=policy, marker='o')
-            plt.fill_between(timesteps, mean_to_plot - std_to_plot, mean_to_plot + std_to_plot, alpha=0.3)
+            plt.fill_between(
+                timesteps,
+                mean_to_plot - std_to_plot,
+                mean_to_plot + std_to_plot,
+                alpha=0.3,
+            )
 
         plt.xlabel('Timestep')
         plt.ylabel('Average Reward')
         plt.title(f'Policy Comparison on {env} (Averaged over Seeds)')
         plt.legend()
         plt.grid(True)
-        plt.savefig(f"./results/{env}_comparison.png")
-        print(f"Plot saved to ./results/{env}_comparison.png")
 
-        # Print final means
-        print("\nFinal Average Rewards:")
+        os.makedirs("./results", exist_ok=True)
+        plot_path = f"./results/{env}_comparison.png"
+        plt.savefig(plot_path)
+        plt.close()
+        print(f"Plot saved to {plot_path}")
+
+        # Print final means and collect for table
+        print("\nFinal Average Rewards for", env)
+        has_any = False
         for policy in sorted(policies):
             policy_dir = os.path.join(env_dir, policy)
             seed_files = glob(os.path.join(policy_dir, "*.npy"))
             if not seed_files:
                 continue
+
             final_rewards = []
             for seed_file in seed_files:
                 eval_data = np.load(seed_file)
                 final_rewards.append(eval_data[-1])
+
+            if not final_rewards:
+                continue
+
             mean_final = np.mean(final_rewards)
             std_error_final = np.std(final_rewards) / np.sqrt(len(final_rewards))
             print(f"{policy}: {mean_final:.3f} ± {std_error_final:.3f}")
+
+            env_results[policy] = (mean_final, std_error_final)
+            has_any = True
+
+        # Only store environments that actually had some results
+        if has_any:
+            table_data[env] = env_results
+
+    # After looping over all envs, create a LaTeX table
+    if table_data:
+        latex_path = "./results/final_rewards_table.tex"
+        with open(latex_path, "w") as f:
+            # Column spec: 1 for env + one per policy
+            col_spec = "l" + "c" * len(policies)
+
+            f.write("\\begin{table}[ht]\n")
+            f.write("    \\centering\n")
+            f.write(f"    \\begin{{tabular}}{{{col_spec}}}\n")
+            f.write("        \\hline\n")
+
+            # Header row
+            header_cells = ["Environment"] + policies
+            header_line = " & ".join(header_cells) + " \\\\\n"
+            f.write("        " + header_line)
+            f.write("        \\hline\n")
+
+            # Body rows: one per env
+            for env in sorted(table_data.keys()):
+                env_results = table_data[env]
+                # Escape underscores in LaTeX if any
+                env_name = env.replace("_", "\\_")
+
+                row_cells = [env_name]
+                for policy in policies:
+                    if policy in env_results:
+                        mean_final, std_error_final = env_results[policy]
+                        cell = f"{mean_final:.1f} $\\pm$ {std_error_final:.1f}"
+                    else:
+                        cell = "--"
+                    row_cells.append(cell)
+
+                row_line = " & ".join(row_cells) + " \\\\\n"
+                f.write("        " + row_line)
+
+            f.write("        \\hline\n")
+            f.write("    \\end{tabular}\n")
+            f.write("    \\caption{Final average return (mean $\\pm$ standard error over seeds).}\n")
+            f.write("    \\label{tab:final_rewards}\n")
+            f.write("\\end{table}\n")
+
+        print(f"\nLaTeX table written to {latex_path}")
+    else:
+        print("No data collected for LaTeX table (no environments had results).")
 
 if __name__ == "__main__":
     main()

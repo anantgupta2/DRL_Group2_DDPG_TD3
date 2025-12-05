@@ -17,5 +17,5 @@ do
 	--policy "GaussianTD3" \
 	--env "Hopper-v5" \
 	--seed $i \
-	--alpha 0.9
+	--alpha 0.75
 done

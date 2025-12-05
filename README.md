@@ -8,6 +8,21 @@ Networks are trained using [PyTorch 2.9](https://github.com/pytorch/pytorch) and
 ## Reimplementation Results
 We rerun their MuJoCo experiments with the exact same hyperparameters and get the following results.
 
+### Performance (Time and Final Reward)
+
+Based on [results/final_rewards_table.tex](results/final_rewards_table.tex) and [results/final_rewards.csv](results/final_rewards.csv):
+
+| Environment               | TD3 Reward (±)  | TD3 Time (min ±) | DDPG Reward (±) | DDPG Time (min ±) |
+| ------------------------- | --------------- | ---------------- | --------------- | ----------------- |
+| Ant-v5                    | 3944.0 ± 785.0  | 69.0 ± 0.5       | 1308.5 ± 196.3  | 76.8 ± 0.7        |
+| HalfCheetah-v5            | 11057.6 ± 91.8  | 55.4 ± 0.2       | 9273.9 ± 517.9  | 59.2 ± 0.2        |
+| Hopper-v5                 | 3304.1 ± 88.6   | 56.2 ± 0.6       | 2102.8 ± 442.5  | 59.8 ± 0.2        |
+| InvertedDoublePendulum-v5 | 7695.4 ± 1623.5 | 56.2 ± 0.2       | 9275.6 ± 23.6   | 59.8 ± 0.2        |
+| InvertedPendulum-v5       | 1000.0 ± 0.0    | 53.4 ± 0.2       | 1000.0 ± 0.0    | 57.4 ± 0.2        |
+| Reacher-v5                | -3.1 ± 0.7      | 48.6 ± 0.2       | -5.9 ± 1.6      | 53.2 ± 0.2        |
+| Walker2d-v5               | 4253.9 ± 130.7  | 57.4 ± 0.4       | 1988.5 ± 408.2  | 58.8 ± 0.2        |
+
+
 ### Visualizations
 The [notebook](./algorithm_comparison.ipynb) provides an interactive way to run and compare all algorithms. Here we provide comparison plots for all environments:
 
@@ -35,9 +50,10 @@ The [notebook](./algorithm_comparison.ipynb) provides an interactive way to run 
 - `Gaussian_TD3.py` - Gaussian TD3 implementation
 - `utils.py` - Replay buffer implementation
 - `main.py` - Training script for running experiments
-- `plot_results.py` - Script for generating comparison plots
+- `plot_results.py`, `plot_results_alpha.py`, `plot_results_k.py` - Script for generating comparison plots
 - `compare_td3_ddpg.py` - Multi-seed statistical comparison script
 - `algorithm_comparison.ipynb` - **Jupyter notebook for interactive experimentation** (imports from Python files)
+- `log_files` folder - Folder with log files from different experiments
 
 ## Installation
 
@@ -150,6 +166,8 @@ sbatch scripts/queue_all.sh
 This will submit jobs for:
 - `queue_relevant.sh` - Ant, Walker, InvertedPendulum (TD3 and DDPG)
 - `queue_other.sh` - Other environments (TD3 and DDPG)
+- `run_gaussiantd3.sh` - Gaussain TD3 experiments
+- `run_qrtd3.sh` - Quantile TD3 experiments
 
 To run specific algorithm variants:
 
@@ -232,6 +250,7 @@ The `--policy` argument accepts one of the following:
 - [TD3 Paper](https://arxiv.org/abs/1802.09477)
 - [DDPG Paper](https://arxiv.org/abs/1509.02971)
 - [TD3 Official Implementation](https://github.com/sfujim/TD3)
+- [DQN Paper](https://arxiv.org/pdf/1710.10044)
 - [OpenAI Baselines](https://github.com/openai/baselines) - For DDPG, PPO, TRPO, ACKTR comparisons
 - [Learned Agent Video](https://youtu.be/x33Vw-6vzso)
 
