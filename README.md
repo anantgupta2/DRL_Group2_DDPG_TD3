@@ -10,17 +10,20 @@ We rerun their MuJoCo experiments with the exact same hyperparameters and get th
 
 ### Performance (Time and Final Reward)
 
+**Table 1: Performance Comparison (Time and Final Reward) between TD3 and DDPG across MuJoCo environments.**
+
 Based on [results/training_times.csv](results/training_times.csv) and [results/final_rewards.csv](results/final_rewards.csv):
 
-| Environment               | TD3 Reward (±)  | TD3 Time (min ±) | DDPG Reward (±) | DDPG Time (min ±) |
-| ------------------------- | --------------- | ---------------- | --------------- | ----------------- |
-| Ant-v5                    | 3944.0 ± 785.0  | 69.0 ± 0.5       | 1308.5 ± 196.3  | 76.8 ± 0.7        |
-| HalfCheetah-v5            | 11057.6 ± 91.8  | 55.4 ± 0.2       | 9273.9 ± 517.9  | 59.2 ± 0.2        |
-| Hopper-v5                 | 3304.1 ± 88.6   | 56.2 ± 0.6       | 2102.8 ± 442.5  | 59.8 ± 0.2        |
-| InvertedDoublePendulum-v5 | 7695.4 ± 1623.5 | 56.2 ± 0.2       | 9275.6 ± 23.6   | 59.8 ± 0.2        |
-| InvertedPendulum-v5       | 1000.0 ± 0.0    | 53.4 ± 0.2       | 1000.0 ± 0.0    | 57.4 ± 0.2        |
-| Reacher-v5                | -3.1 ± 0.7      | 48.6 ± 0.2       | -5.9 ± 1.6      | 53.2 ± 0.2        |
-| Walker2d-v5               | 4253.9 ± 130.7  | 57.4 ± 0.4       | 1988.5 ± 408.2  | 58.8 ± 0.2        |
+| Environment               | TD3             |                  | DDPG             |                  |
+| ------------------------- | --------------- | ---------------- | ---------------- | ---------------- |
+|                           | Reward          | Time (min)       | Reward           | Time (min)       |
+| Ant-v5                    | 3944.0 ± 785.0  | 69.0 ± 0.5       | 1308.5 ± 196.3   | 76.8 ± 0.7       |
+| HalfCheetah-v5            | 11057.6 ± 91.8  | 55.4 ± 0.2       | 9273.9 ± 517.9   | 59.2 ± 0.2       |
+| Hopper-v5                 | 3304.1 ± 88.6   | 56.2 ± 0.6       | 2102.8 ± 442.5   | 59.8 ± 0.2       |
+| InvertedDoublePendulum-v5 | 7695.4 ± 1623.5 | 56.2 ± 0.2       | 9275.6 ± 23.6    | 59.8 ± 0.2       |
+| InvertedPendulum-v5       | 1000.0 ± 0.0    | 53.4 ± 0.2       | 1000.0 ± 0.0     | 57.4 ± 0.2       |
+| Reacher-v5                | -3.1 ± 0.7      | 48.6 ± 0.2       | -5.9 ± 1.6       | 53.2 ± 0.2       |
+| Walker2d-v5               | 4253.9 ± 130.7  | 57.4 ± 0.4       | 1988.5 ± 408.2   | 58.8 ± 0.2       |
 
 
 ### Visualizations
@@ -234,20 +237,6 @@ The `--policy` argument accepts one of the following:
 - [TD3 Official Implementation](https://github.com/sfujim/TD3)
 - [OpenAI Baselines](https://github.com/openai/baselines) - For DDPG, PPO, TRPO, ACKTR comparisons
 - [Learned Agent Video](https://youtu.be/x33Vw-6vzso)
-
-## Troubleshooting
-
-### CUDA Out of Memory
-Reduce batch size in hyperparameters:
-```python
-batch_size = 128  # Instead of 256
-```
-
-### Jupyter Kernel Dies
-Reduce max_timesteps or eval_freq to lower memory usage:
-```python
-max_timesteps = int(2e5)  # Instead of 5e5
-```
 
 ## License
 
